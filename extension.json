@@ -4,7 +4,10 @@
   "organization": "Rahan Benabid",
   "description": "Format your files using clang-format",
   "version": "0.1",
-  "categories": ["commands", "formatters"],
+  "categories": [
+    "commands",
+    "formatters"
+  ],
   "main": "main.js",
   "entitlements": {
     "process": true,

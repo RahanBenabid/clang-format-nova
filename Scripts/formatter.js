@@ -2,21 +2,22 @@ const config = require("./config.js");
 
 function runClangFormat(editor, text, path) {
   return new Promise((res, rej) => {
-    const executable =
-      nova.config.get(config.CONFIG_EXECUTABLE, "string") ||
-      "/opt/homebrew/bin/clang-format";
+    const executable = nova.config.get(config.CONFIG_EXECUTABLE, "string") ||
+                       "/opt/homebrew/bin/clang-format";
 
     const options = {
-      args: ["--assume-filename", path],
-      stdio: "pipe",
+      args : [ "--assume-filename", path ],
+      stdio : "pipe",
     };
 
-    if (nova.workspace.path) options.cwd = nova.workspace.path;
+    if (nova.workspace.path)
+      options.cwd = nova.workspace.path;
 
     const process = new Process(executable, options);
     if (!process) {
       console.error("couldn't create a process");
-      if (reject) reject("no process");
+      if (reject)
+        reject("no process");
       return;
     }
 
@@ -58,9 +59,9 @@ async function formatEditor(editor) {
 
   try {
     const formattedContent = await runClangFormat(
-      editor,
-      original,
-      editor.document.path,
+        editor,
+        original,
+        editor.document.path,
     );
 
     if (formattedContent !== original) {
