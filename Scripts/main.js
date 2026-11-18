@@ -3,7 +3,7 @@ const config = require("./config.js");
 
 exports.activate = function () {
   nova.commands.register("com.rahan.clangformat.formatDocument", (editor) =>
-    formatEditor(editor),
+    formatter.formatEditor(editor),
   );
 
   nova.workspace.onDidAddTextEditor((editor) => {

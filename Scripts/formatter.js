@@ -1,14 +1,14 @@
 const config = require("./config.js");
 
-function runClangFormat(text, path) {
+function runClangFormat(editor, text, path) {
   return new Promise((res, rej) => {
     const executable =
       nova.config.get(config.CONFIG_EXECUTABLE, "string") ||
       "/opt/homebrew/bin/clang-format";
 
     const options = {
-      args: [path],
-      stdio: ["pipe", "pipe", "pipe"],
+      args: ["--assume-filename", path],
+      stdio: "pipe",
     };
 
     if (nova.workspace.path) options.cwd = nova.workspace.path;
@@ -20,18 +20,21 @@ function runClangFormat(text, path) {
       return;
     }
 
-    const stdout = [];
-    const stderr = [];
+    const textRange = new Range(0, editor.document.length);
+    const content = editor.document.getTextInRange(textRange);
+    const filePath = nova.workspace.relativizePath(editor.document.path);
 
-    process.onStdout((line) => stdout.push(line));
-    process.onStderr((line) => stderr.push(line));
+    let outBuffer = [];
+    let errBuffer = [];
+
+    process.onStdout((output) => outBuffer.push(output));
+    process.onStderr((err) => errBuffer.push(err));
 
     process.onDidExit((status) => {
       if (status === 0) {
-        res(stdout.join(""));
-        return;
+        res(outBuffer.join(""));
       } else {
-        const message = stderr.join("").trim();
+        console.error(errBuffer.join(""));
         rej(new Error(message) || `exited with status ${status}`);
       }
     });
@@ -50,15 +53,26 @@ function runClangFormat(text, path) {
 }
 
 async function formatEditor(editor) {
-  const document = editor.document;
-  const range = new Range(0, document.length);
-  const original = document.getTextInRange(range);
+  const range = new Range(0, editor.document.length);
+  const original = editor.document.getTextInRange(range);
 
   try {
-    const formatted = await runClangFormat(original, document.path);
-    if (formatted.lenght === 0 && original.length > 0) return;
+    const formattedContent = await runClangFormat(
+      editor,
+      original,
+      editor.document.path,
+    );
 
-    await editor.edit((edit) => edit.replace(range, formatted));
+    if (formattedContent !== original) {
+      console.log("Formatting " + editor.document.path);
+      await editor.edit((edit) => {
+        edit.replace(range, formattedContent, InsertTextFormat.PlainText);
+      });
+    } else {
+      console.log("Nothing to format");
+    }
+
+    return;
   } catch (err) {
     console.error(`clang format: ${error.message}`);
   }
