@@ -1,0 +1,39 @@
+{
+  "identifier": "com.rahan.clangformat",
+  "name": "clang-format",
+  "organization": "Rahan Benabid",
+  "description": "Format your files using clang-format",
+  "version": "0.1",
+  "categories": ["commands", "formatters"],
+  "main": "main.js",
+  "entitlements": {
+    "process": true,
+    "filesystem": "readonly"
+  },
+
+  "config": [
+    {
+      "key": "com.rahan.clangformat.formatOnSave",
+      "title": "Format on Save",
+      "description": "Run `clang-format` on save.",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "com.rahan.clangformat.executablePath",
+      "title": "Clang Format Executable",
+      "description": "Path to the `clang-format` executable, is not installed by default on MacOS or XCode Command Line Tools.\nUse `brew install clang-format` to install",
+      "type": "path",
+      "default": "/opt/homebrew/bin/clang-format"
+    }
+  ],
+
+  "commands": {
+    "editor": [
+      {
+        "title": "Clang Format",
+        "command": "com.rahan.clangformat.formatOnSave"
+      }
+    ]
+  }
+}
