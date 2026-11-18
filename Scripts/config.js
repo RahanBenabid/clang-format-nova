@@ -1,5 +1,5 @@
-const CONFIG_FORMAT_ON_SAVE = "org.clangformat.formatOnSave";
-const CONFIG_EXECUTABLE = "org.clangformat.executablePath";
+const CONFIG_FORMAT_ON_SAVE = "com.rahan.clangformat.formatOnSave";
+const CONFIG_EXECUTABLE = "com.rahan.clangformat.executablePath";
 
 module.exports = {
   CONFIG_EXECUTABLE,
